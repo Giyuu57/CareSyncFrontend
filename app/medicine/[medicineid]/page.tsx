@@ -150,7 +150,7 @@ export default function MedicineDetailsPage({
     if (!loadingStores) return;
     const messages = [
       "Acquiring GPS location coordinates...",
-      "Connecting to MediQ central database...",
+      "Connecting to CareSync central database...",
       "Filtering stores within 20km radius...",
       "Matching medicine composition matches...",
       "Analyzing active stock inventory counts...",

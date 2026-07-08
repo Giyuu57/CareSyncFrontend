@@ -28,12 +28,12 @@ export default function ProfilePage() {
   });
 
   const avatarPresets = [
-    { name: "Clinical Doctor", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=MediQDoctor" },
-    { name: "Pharmacist", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=MediQPharmacist" },
-    { name: "Patient Male", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=MediQPatientMale" },
-    { name: "Patient Female", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=MediQPatientFemale" },
-    { name: "Health Bot", url: "https://api.dicebear.com/7.x/bottts/svg?seed=MediQCustomer" },
-    { name: "Identicon Admin", url: "https://api.dicebear.com/7.x/identicon/svg?seed=MediQAdmin" }
+    { name: "Clinical Doctor", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=CareSyncDoctor" },
+    { name: "Pharmacist", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=CareSyncPharmacist" },
+    { name: "Patient Male", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=CareSyncPatientMale" },
+    { name: "Patient Female", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=CareSyncPatientFemale" },
+    { name: "Health Bot", url: "https://api.dicebear.com/7.x/bottts/svg?seed=CareSyncCustomer" },
+    { name: "Identicon Admin", url: "https://api.dicebear.com/7.x/identicon/svg?seed=CareSyncAdmin" }
   ];
 
   useEffect(() => {

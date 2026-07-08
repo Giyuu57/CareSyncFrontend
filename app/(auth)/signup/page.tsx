@@ -100,7 +100,7 @@ export default function SignupPage() {
         <div className="w-full max-w-md mx-auto p-6">
             <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8 shadow-2xl transition duration-300">
                 <h1 className="text-3xl font-extrabold text-white text-center mb-2 tracking-tight">Signup</h1>
-                <p className="text-gray-400 text-sm text-center mb-8">Create your MediQ account</p>
+                <p className="text-gray-400 text-sm text-center mb-8">Create your CareSync account</p>
                 
                 <Form
                     action={""}

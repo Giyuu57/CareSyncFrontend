@@ -107,7 +107,7 @@ export default function PrescriptionScannerPage() {
     try {
       // 1. Search database to get medicine record
       const searchRes = await axios.get(`${backendUrl}/search/`, {
-        params: { query: medName, source: "mediq", limit: 1 },
+        params: { query: medName, source: "careSync", limit: 1 },
       });
 
       if (searchRes.data && searchRes.data.length > 0) {

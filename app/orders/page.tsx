@@ -412,7 +412,7 @@ function OrdersPage() {
               {/* Corporate Header */}
               <div className="border-b border-white/10 pb-4 flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-bold text-white">MediQ Wholesale Invoice</h3>
+                  <h3 className="text-lg font-bold text-white">CareSync Wholesale Invoice</h3>
                   <p className="text-xs text-cyan-400 mt-1 font-mono select-all">Inv-ID: {selectedOrder._id}</p>
                   <p className="text-xs text-gray-400 mt-0.5">Date: {new Date(selectedOrder.orderDate).toLocaleString()}</p>
                 </div>

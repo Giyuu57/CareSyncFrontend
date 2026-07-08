@@ -12,7 +12,7 @@ const getHeaders = () => {
 };
 
 // Search for medicines
-export const searchMedicines = async (query: string, source: string = "mediq") => {
+export const searchMedicines = async (query: string, source: string = "caresync") => {
   if (!query || query.trim().length < 3) {
     return [];
   }
