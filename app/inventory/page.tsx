@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import CustomDialog from "../../components/CustomDialog";
 import { useToast } from "@/context/ToastContext";
+import { useRequireAuth } from "@/utils/useRequireAuth";
 import {
   fetchInventory,
   addInventory,
@@ -35,6 +36,7 @@ interface InventoryItem {
 const ITEMS_PER_PAGE = 6;
 
 const InventoryPage = () => {
+  const authChecked = useRequireAuth();
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [openAdd, setOpenAdd] = useState(false);
@@ -53,6 +55,7 @@ const InventoryPage = () => {
   const { showToast } = useToast();
 
   useEffect(() => {
+    if (!authChecked) return;
     const loadInventory = async () => {
       try {
         const data = await fetchInventory();
@@ -66,7 +69,7 @@ const InventoryPage = () => {
     };
     loadInventory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reload]);
+  }, [reload, authChecked]);
 
   useEffect(() => {
     if (!openEdit) {
@@ -231,6 +234,10 @@ const InventoryPage = () => {
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
+
+  if (!authChecked) {
+    return null;
+  }
 
   return (
     <div className="p-6 md:p-10 bg-black min-h-screen text-white max-w-6xl mx-auto text-left">
