@@ -2,12 +2,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE } from "@/utils/apiConfig";
 import { useToast } from "@/context/ToastContext";
 import Link from "next/link";
 import { FiUser, FiPhone, FiInfo, FiMapPin, FiCalendar, FiEdit2, FiShield, FiSliders, FiBriefcase } from "react-icons/fi";
 
 export default function ProfilePage() {
-  const API_URL = `${process.env.NEXT_PUBLIC_BACKEND}`;
+  const API_URL = API_BASE;
   const [profileData, setProfileData] = useState<any>(null);
   const [storeData, setStoreData] = useState<any>(null);
   const [addressData, setAddressData] = useState<any>(null);

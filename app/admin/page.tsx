@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import dynamic from "next/dynamic";
+import { API_BASE } from "@/utils/apiConfig";
 import { useToast } from "@/context/ToastContext";
 import CustomDialog from "@/components/CustomDialog";
 // @ts-ignore
@@ -89,7 +90,7 @@ const pendingMarkerIcon = makePinIcon("#f59e0b", "rgba(245,158,11,0.7)", true);
 const completedMarkerIcon = makePinIcon("#10b981", "rgba(16,185,129,0.7)", false);
 const cancelledMarkerIcon = makePinIcon("#ef4444", "rgba(239,68,68,0.7)", false);
 
-const host = `${process.env.NEXT_PUBLIC_BACKEND}`;
+const host = API_BASE;
 
 type TabKey = "analytics" | "users" | "medicines" | "orders" | "broadcasts" | "audit";
 

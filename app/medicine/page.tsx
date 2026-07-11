@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { API_BASE } from "@/utils/apiConfig";
 import SearchInput from "@/components/SearchInput";
 import SearchOptions from "@/components/SearchOptions";
 import SearchResults from "@/components/SearchResults";
@@ -43,7 +44,7 @@ export default function SearchMedicine() {
     }
   }, [router, showToast]);
   
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND;
+  const backendUrl = API_BASE;
 
   const handleSelectTemplate = (medName: string) => {
     setSelectedTemplate(medName);

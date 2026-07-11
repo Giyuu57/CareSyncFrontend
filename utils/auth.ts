@@ -1,6 +1,7 @@
 
 // utils/auth.ts
-const host = `${process.env.NEXT_PUBLIC_BACKEND}`; // Define the host URL
+import { API_BASE } from "./apiConfig";
+const host = API_BASE;
 export const login = async (email: string, password: string) => {
     const res = await fetch(`${host}/auth/login`, {
         method: "POST",

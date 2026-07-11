@@ -6,6 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
 import { useMap } from 'react-leaflet';
+import { API_BASE } from '@/utils/apiConfig';
 
 // Custom HTML/CSS DivIcon for User Location
 const userLocationIcon = typeof window !== 'undefined' ? L.divIcon({
@@ -92,7 +93,7 @@ function MapUpdater({ location }: { location: [number, number] }) {
   return null;
 }
 
-const host = `${process.env.NEXT_PUBLIC_BACKEND}`;
+const host = API_BASE;
 
 type State = {
   places: Array<{ name: string; lat: number; lng: number; details?: any }>;

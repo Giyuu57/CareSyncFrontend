@@ -1,9 +1,11 @@
 
 
+import { API_BASE } from "./apiConfig";
+
 export default async function GetUserDetails() {
     const token = localStorage.getItem("auth_token");
     if(token){
-        const resUser = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/user/`, {
+        const resUser = await fetch(`${API_BASE}/user/`, {
             method: "GET",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         });

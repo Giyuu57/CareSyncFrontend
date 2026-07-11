@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = `${process.env.NEXT_PUBLIC_BACKEND}/request/`;
+import { API_BASE } from "./apiConfig";
+const API_URL = `${API_BASE}/request/`;
 
 export const fetchRequests = async (token: string) => {
   if (!token) throw new Error("Authentication token is missing.");

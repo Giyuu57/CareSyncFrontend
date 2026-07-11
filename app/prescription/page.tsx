@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useToast } from "@/context/ToastContext";
+import { API_BASE } from "@/utils/apiConfig";
 import dynamic from "next/dynamic";
 import {
   FiUploadCloud,
@@ -59,7 +60,7 @@ export default function PrescriptionScannerPage() {
     }
   }, [router, showToast]);
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND;
+  const backendUrl = API_BASE;
 
   // Scanner & State Machine
   const [scanState, setScanState] = useState<"idle" | "scanning" | "done">("idle");

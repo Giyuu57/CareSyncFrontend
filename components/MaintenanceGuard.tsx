@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import axios from "axios";
 import { FiAlertTriangle, FiLoader } from "react-icons/fi";
+import { API_BASE } from "@/utils/apiConfig";
 
 interface Announcement {
   _id: string;
@@ -74,7 +75,7 @@ const MaintenanceGuard: React.FC<MaintenanceGuardProps> = ({ children }) => {
         }
 
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND}/admin/announcements/active`,
+          `${API_BASE}/admin/announcements/active`,
           { 
             headers,
             params: { role: userRole }

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/context/ToastContext";
 import axios from "axios";
+import { API_BASE } from "@/utils/apiConfig";
 import { createCustomerOrder } from "@/utils/management";
 import CustomDialog from "@/components/CustomDialog";
 import { FiMapPin, FiPhone, FiInfo, FiTruck, FiAlertTriangle, FiCheckCircle, FiStar } from "react-icons/fi";
@@ -143,7 +144,7 @@ export default function MedicineDetailsPage({
   const [loadingSubstitutes, setLoadingSubstitutes] = useState<boolean>(false);
 
   const search = medicineid.split("-").length <= 1;
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND;
+  const backendUrl = API_BASE;
 
   // Rotate radar status scanning text
   useEffect(() => {

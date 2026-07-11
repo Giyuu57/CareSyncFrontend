@@ -1,5 +1,6 @@
 import axios from "axios";
-const API_URL = `${process.env.NEXT_PUBLIC_BACKEND}/medicine/`;
+import { API_BASE } from "./apiConfig";
+const API_URL = `${API_BASE}/medicine/`;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const addMedicine = async (token: string, medicine: Record<string, any>) => {

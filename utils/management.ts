@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_BASE } from "./apiConfig";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND;
+const API_BASE_URL = API_BASE;
 
 // Helper function to get headers with the authorization token
 const getHeaders = () => {

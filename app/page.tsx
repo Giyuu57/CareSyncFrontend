@@ -7,6 +7,7 @@ import Link from "next/link";
 import AddRequestDialog from "@/components/AddRequestDialogWrapper";
 import { checkPendingRequests, fetchRequests, updateRequestStatus } from "@/utils/request";
 import { fetchInventory, fetchCustomerOrders } from "@/utils/management";
+import { API_BASE } from "@/utils/apiConfig";
 import { useToast } from "@/context/ToastContext";
 import axios from "axios";
 
@@ -36,7 +37,7 @@ export default function HomePage() {
   const [customerOrders, setCustomerOrders] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const host = `${process.env.NEXT_PUBLIC_BACKEND}`;
+  const host = API_BASE;
 
   // Read User profile
   useEffect(() => {

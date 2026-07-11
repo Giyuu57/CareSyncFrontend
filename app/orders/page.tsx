@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE } from "@/utils/apiConfig";
 import Link from "next/link";
 import { useToast } from "@/context/ToastContext";
 import AddMedicineDialog from "@/components/AddMedicineDialog";
@@ -54,7 +55,7 @@ function OrdersPage() {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [showAddMedicineDialog, setShowAddMedicineDialog] = useState(false);
 
-  const host = `${process.env.NEXT_PUBLIC_BACKEND}`;
+  const host = API_BASE;
 
   // Helper to fetch authorization headers
   const getHeaders = () => {

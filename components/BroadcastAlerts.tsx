@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FiX, FiInfo, FiAlertTriangle, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
+import { API_BASE } from "@/utils/apiConfig";
 
 interface Announcement {
   _id: string;
@@ -34,7 +35,7 @@ const BroadcastAlerts: React.FC = () => {
         }
 
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND}/admin/announcements/active`,
+          `${API_BASE}/admin/announcements/active`,
           { 
             headers,
             params: { role: userRole }
