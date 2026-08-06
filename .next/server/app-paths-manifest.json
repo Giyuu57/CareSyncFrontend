@@ -1,1 +1,12 @@
-{}
+{
+  "/(auth)/forgot-password/page": "app/(auth)/forgot-password/page.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(auth)/signup/page": "app/(auth)/signup/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/map/page": "app/map/page.js",
+  "/medicine/[medicineid]/page": "app/medicine/[medicineid]/page.js",
+  "/medicine/page": "app/medicine/page.js",
+  "/orders/page": "app/orders/page.js",
+  "/page": "app/page.js",
+  "/prescription/page": "app/prescription/page.js"
+}

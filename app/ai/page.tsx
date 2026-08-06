@@ -1,10 +1,5 @@
 import React from 'react';
 
-// NOTE: This page used to call Google's Gemini API directly from the browser
-// using NEXT_PUBLIC_GAPI. That exposed the API key to every visitor (anyone
-// can read NEXT_PUBLIC_* values out of the shipped JS) and let them run up
-// your bill. Removed until there's a backend endpoint that proxies the
-// request server-side with a non-public key.
 export default function AI() {
   return (
     <div>

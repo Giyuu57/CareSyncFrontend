@@ -1,0 +1,10 @@
+(globalThis.TURBOPACK_CHUNK_LISTS || (globalThis.TURBOPACK_CHUNK_LISTS = [])).push({
+    script: typeof document === "object" ? document.currentScript : undefined,
+    chunks: [
+  "static/chunks/node_modules_react-leaflet_lib_index_2d925ee9.js",
+  "static/chunks/node_modules_47116cce._.js",
+  "static/chunks/components_AddRequestDialog_tsx_c3944682._.js",
+  "static/chunks/node_modules_leaflet_dist_leaflet_ef5f0413.css"
+],
+    source: "dynamic"
+});
