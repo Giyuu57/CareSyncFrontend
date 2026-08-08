@@ -9,7 +9,6 @@ import { useToast } from "@/context/ToastContext";
 import { FiTrash2, FiMapPin } from "react-icons/fi";
 // @ts-ignore
 const L = typeof window !== "undefined" ? require("leaflet") : null;
-import "leaflet/dist/leaflet.css";
 
 const AddRequestDialog = dynamic(() => import("@/components/AddRequestDialog"), {
   ssr: false,

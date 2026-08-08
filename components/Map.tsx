@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useReducer } from 'react';
 import dynamic from 'next/dynamic';
+// @ts-ignore: Leaflet CSS is loaded for side effects.
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';

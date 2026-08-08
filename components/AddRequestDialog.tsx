@@ -6,6 +6,7 @@ import L from "leaflet";
 import { FiX, FiCheck, FiMapPin, FiMap, FiBriefcase, FiHash, FiPhone, FiAlertCircle } from "react-icons/fi";
 import { useToast } from "@/context/ToastContext";
 
+// @ts-ignore - Leaflet CSS is loaded for its side effects in Next.js
 import "leaflet/dist/leaflet.css";
 import { addRequest } from "@/utils/request";
 

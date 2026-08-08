@@ -50,8 +50,6 @@ const Popup = dynamic(
   { ssr: false }
 );
 
-import "leaflet/dist/leaflet.css";
-
 // ─── Custom DivIcon markers for request status ────────────────────────────────
 const makePinIcon = (color: string, glow: string, pulse?: boolean) =>
   typeof window !== "undefined"
