@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
-// @ts-expect-error Leaflet CSS is handled by the bundler.
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 

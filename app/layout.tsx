@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-// @ts-expect-error - CSS module is handled by Next.js
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import BroadcastAlerts from "@/components/BroadcastAlerts";
@@ -61,4 +60,3 @@ export default function RootLayout({
     </html>
   );
 }
-
