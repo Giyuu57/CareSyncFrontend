@@ -1,177 +1,149 @@
 # CareSync Frontend
 
-CareSync is a modern healthcare web platform designed to simplify medicine discovery, nearby medical facility access, store inventory management, and healthcare assistance through a clean and responsive user interface.
+CareSync is a healthcare web platform for medicine discovery, nearby pharmacy/hospital search, pharmacy store inventory management, and AI-assisted healthcare guidance.
 
-This repository contains the frontend of the CareSync platform, built with **Next.js** for performance, scalability, and smooth user experience.
+This repository is the **frontend** of CareSync, built with **Next.js 15** and **React 19**.
+
+**Live demo:** [caresync-frontend-self.vercel.app](https://caresync-frontend-self.vercel.app)
+
+> Companion repository: [CareSyncBackend](https://github.com/Giyuu57/CareSyncBackend)
 
 ---
 
 ## Features
 
 ### Medicine Search
-
 - Search medicines by name.
-- View medicine details such as usage, composition, and manufacturer.
-- Compare alternatives and find relevant medicine information.
+- View medicine details — usage, composition, manufacturer.
+- Compare alternatives and related medicine information.
 
 ### Nearby Healthcare Facilities
-
-- Find nearby hospitals and pharmacies.
-- Search facilities by city or current location.
-- Interactive map-based experience for better accessibility.
+- Find nearby hospitals and pharmacies on an interactive map (Leaflet).
+- Search by city or current location.
 
 ### Medical Store Dashboard
-
 - Manage store profile and inventory.
-- Add, update, and remove medicines.
-- Track available stock and medicine details.
-
-### User-Friendly Interface
-
-- Clean and modern UI.
-- Fully responsive design for desktop, tablet, and mobile.
-- Simple navigation for patients, customers, and store owners.
+- Add, update, and remove medicines from stock.
+- Track available quantities.
 
 ### AI-Powered Assistance
+- Smart healthcare-related suggestions powered by Google's Gemini API.
 
-- Get smart healthcare-related suggestions.
-- Improve user experience with intelligent insights.
-
----
+### User-Friendly Interface
+- Clean, responsive UI across desktop, tablet, and mobile.
+- Simple navigation for patients, customers, and store owners.
 
 ## Tech Stack
 
-- **Next.js** – React framework for frontend development
-- **React.js** – Component-based UI library
-- **JavaScript / TypeScript** – Application logic
-- **Tailwind CSS** – Styling and responsive design
-- **Axios / Fetch API** – API communication
-- **Google Maps API / Map Integration** – Location-based features
-- **Backend API** – Connected with CareSync backend services
-
----
+| Category         | Technology                                      |
+|-------------------|---------------------------------------------------|
+| Framework         | Next.js 15 (App Router, Turbopack)                |
+| UI Library        | React 19                                          |
+| Language          | TypeScript                                        |
+| Styling           | Tailwind CSS 4                                    |
+| HTTP Client       | Axios                                             |
+| Maps              | Leaflet / React-Leaflet                           |
+| AI                | Google Gemini (`@google/genai`)                   |
+| Analytics         | Vercel Analytics & Speed Insights                 |
+| Icons             | react-icons                                       |
 
 ## Project Structure
 
-```bash
-caresync-frontend/
-│
-├── app/                  # Next.js app routes and pages
-├── components/           # Reusable UI components
-├── public/               # Static assets
-├── styles/               # Global styles
-├── lib/                  # Utility functions and API helpers
-├── hooks/                # Custom React hooks
-├── package.json          # Project dependencies and scripts
-└── README.md             # Project documentation
+```
+CareSyncFrontend/
+├── app/            # Next.js App Router — routes and pages
+├── components/     # Reusable UI components
+├── context/        # React context providers (e.g. auth/session state)
+├── public/         # Static assets
+├── styles/         # Global styles
+├── utils/          # API helpers and shared utility functions
+├── next.config.ts  # Next.js configuration
+├── package.json    # Dependencies and scripts
+└── README.md
 ```
 
----
+## Prerequisites
+
+- **Node.js** v18.18 or later (required by Next.js 15)
+- **npm** v9 or later
+- A running instance of [CareSyncBackend](https://github.com/Giyuu57/CareSyncBackend)
+- A **Google Maps API key** (for map-based location features)
+- A **Google Gemini API key** (for AI-powered assistance)
 
 ## Getting Started
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/caresync-frontend.git
-cd caresync-frontend
+git clone https://github.com/Giyuu57/CareSyncFrontend.git
+cd CareSyncFrontend
 ```
 
-### 2. Install Dependencies
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Create Environment File
+### 3. Configure environment variables
 
-Create a `.env.local` file in the root directory and add the required environment variables:
+Create a `.env.local` file in the project root:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<your-google-maps-api-key>
+GEMINI_API_KEY=<your-gemini-api-key>
 ```
 
-Replace the values according to your backend server and API keys.
+> `NEXT_PUBLIC_API_URL` must point to wherever your [CareSyncBackend](https://github.com/Giyuu57/CareSyncBackend) instance is actually running — check that repo's own `.env` for its configured `PORT` before setting this.
 
-### 4. Run the Development Server
+### 4. Run the development server
 
 ```bash
 npm run dev
 ```
 
-The project will start on:
+The app runs on:
 
-```bash
-http://localhost:3000
+```
+http://localhost:4000
 ```
 
----
+> Note: this project is configured to run on **port 4000**, not the Next.js default of 3000 — this frees up 3000 for the backend during local development.
 
 ## Available Scripts
 
-```bash
-npm run dev
-```
-
-Runs the app in development mode.
-
-```bash
-npm run build
-```
-
-Creates an optimized production build.
-
-```bash
-npm run start
-```
-
-Starts the production server.
-
-```bash
-npm run lint
-```
-
-Runs linting checks.
-
----
+| Command         | Description                                  |
+|------------------|-----------------------------------------------|
+| `npm run dev`   | Start the development server (port 4000, Turbopack) |
+| `npm run build` | Create an optimized production build          |
+| `npm run start` | Serve the production build (port 4000)        |
+| `npm run lint`  | Run ESLint checks                             |
 
 ## Backend Integration
 
-CareSync Frontend communicates with the CareSync Backend for:
+CareSync Frontend communicates with [CareSyncBackend](https://github.com/Giyuu57/CareSyncBackend) for:
 
 - User authentication
 - Medicine data
-- Store management
-- Inventory management
+- Store and inventory management
 - Order handling
-- Location-based services
-- AI-powered healthcare insights
+- Location-based store search
 
-Make sure the backend server is running before using features that require API access.
-
----
+Make sure the backend is running and reachable at the URL set in `NEXT_PUBLIC_API_URL` before using any feature that hits the API — the app will fail to load data otherwise.
 
 ## Deployment
 
-The frontend can be deployed easily on platforms like:
-
-- Vercel
-- Netlify
-- Render
-- Firebase Hosting
+The app is set up to deploy on [Vercel](https://vercel.com) (see the live demo link above), and is also compatible with Netlify, Render, or Firebase Hosting for static/edge deployment.
 
 ### Deploy on Vercel
 
-```bash
-npm run build
-```
+1. Push your changes to GitHub.
+2. Import the repository into Vercel.
+3. Set `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, and `GEMINI_API_KEY` as environment variables in the Vercel project settings.
+4. Deploy — Vercel will run `npm run build` automatically.
 
-Then connect the repository to Vercel and add the required environment variables in the Vercel dashboard.
-
----
-
-## Future Improvements
+## Roadmap
 
 - User profile management
 - Online medicine ordering
@@ -182,22 +154,14 @@ Then connect the repository to Vercel and add the required environment variables
 - Improved AI health assistant
 - Push notifications and reminders
 
----
-
 ## Author
 
-**Gouransh Sattavan**
-
-GitHub: [@Giyuu57](https://github.com/Giyuu57)
-
----
+**Gouransh Sattavan** — [@Giyuu57](https://github.com/Giyuu57)
 
 ## License
 
-This project is licensed under the MIT License.
-
----
+Licensed under the [MIT License](./LICENSE).
 
 ## Disclaimer
 
-CareSync is built for educational and project demonstration purposes. It should not be used as a replacement for professional medical advice, diagnosis, or treatment.
+CareSync is built for educational and project-demonstration purposes. It is not intended as a substitute for professional medical advice, diagnosis, or treatment.
