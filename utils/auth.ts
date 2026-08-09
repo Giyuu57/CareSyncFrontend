@@ -1,4 +1,3 @@
-
 // utils/auth.ts
 import { API_BASE } from "./apiConfig";
 const host = API_BASE;
@@ -28,6 +27,33 @@ export const login = async (email: string, password: string) => {
     return true // ✅ Store token in localStorage
 };
 
+
+// `credential` is the ID token string Google's Identity Services button
+// hands back in its callback — the backend verifies it, so nothing here
+// needs to be trusted client-side.
+export const loginWithGoogle = async (credential: string) => {
+    const res = await fetch(`${host}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential }),
+    });
+
+    if (!res.ok) return false;
+
+    const { token } = await res.json();
+    localStorage.setItem("auth_token", token);
+
+    const resUser = await fetch(`${host}/user/`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+    });
+    if (resUser.ok) {
+        const userData = await resUser.json();
+        localStorage.setItem("user_data", JSON.stringify(userData));
+    }
+    window.dispatchEvent(new Event("storage"));
+    return true;
+};
 
 export const register = async (name:string , email: string, password: string , gender:string , phone:string) => {
     const res = await fetch(`${host}/auth/register`, {

@@ -6,6 +6,7 @@ import Form from 'next/form';
 import { useToast } from "@/context/ToastContext";
 import { useState } from "react";
 import Link from "next/link";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function SignupPage() {
     const { showToast } = useToast();
@@ -101,7 +102,17 @@ export default function SignupPage() {
             <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8 shadow-2xl transition duration-300">
                 <h1 className="text-3xl font-extrabold text-white text-center mb-2 tracking-tight">Signup</h1>
                 <p className="text-gray-400 text-sm text-center mb-8">Create your CareSync account</p>
-                
+
+                <div className="mb-6">
+                    <GoogleSignInButton />
+                </div>
+
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="h-px flex-1 bg-white/10" />
+                    <span className="text-xs text-gray-500 uppercase tracking-wider">or</span>
+                    <div className="h-px flex-1 bg-white/10" />
+                </div>
+
                 <Form
                     action={""}
                     onSubmit={handleSignup}
