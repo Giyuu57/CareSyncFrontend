@@ -8,6 +8,11 @@ import axios from 'axios';
 import { useMap } from 'react-leaflet';
 import { API_BASE } from '@/utils/apiConfig';
 
+// MedicineMap already renders live stock counts and OSRM routing (built for
+// the prescription-scanner flow) — reused here so "search by medicine"
+// gets the same real stock data instead of duplicating that logic.
+const MedicineMap = dynamic(() => import('@/components/MedicineMap'), { ssr: false });
+
 // Custom HTML/CSS DivIcon for User Location
 const userLocationIcon = typeof window !== 'undefined' ? L.divIcon({
   className: 'custom-user-marker',
@@ -131,6 +136,65 @@ function MapPage() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [activePlaceIndex, setActivePlaceIndex] = useState<number | null>(null);
   const [mobileTab, setMobileTab] = useState<"list" | "map">("list");
+
+  // "By Medicine" search mode — finds nearby stores that actually have a
+  // given medicine in stock, instead of just listing every pharmacy address.
+  const [searchMode, setSearchMode] = useState<"city" | "medicine">("city");
+  const [medicineQuery, setMedicineQuery] = useState('');
+  const [medicineLoading, setMedicineLoading] = useState(false);
+  const [medicineError, setMedicineError] = useState('');
+  const [stockStores, setStockStores] = useState<any[]>([]);
+  const [selectedStockStore, setSelectedStockStore] = useState<any | null>(null);
+  const [routeInfo, setRouteInfo] = useState<{ distance: string; duration: string }>({ distance: '', duration: '' });
+
+  const findStoresWithMedicine = useCallback(async () => {
+    if (!medicineQuery.trim()) return;
+    setMedicineLoading(true);
+    setMedicineError('');
+    setStockStores([]);
+    setSelectedStockStore(null);
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    if (!token) {
+      setMedicineError('Please log in to search stock by medicine.');
+      setMedicineLoading(false);
+      return;
+    }
+
+    try {
+      // Step 1: resolve the typed name to a medicine ID. source=any lets
+      // this fall back to OpenFDA if it's not in the local catalog yet —
+      // but only locally-stocked results will ever show up in step 2.
+      const searchRes = await axios.get(`${host}/search/`, {
+        params: { query: medicineQuery.trim(), source: 'any', limit: 1 },
+      });
+      const match = Array.isArray(searchRes.data) ? searchRes.data[0] : searchRes.data;
+      const medicineId = match?._id || match?.id;
+
+      if (!medicineId) {
+        setMedicineError(`No medicine found matching "${medicineQuery}".`);
+        return;
+      }
+
+      // Step 2: find nearby stores that actually have it in stock.
+      const stockRes = await axios.get(`${host}/inventory/stores-with-medicine-nearby`, {
+        params: { medicine: medicineId, lat: location[0], lng: location[1], radius: 20 },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setStockStores(stockRes.data);
+      setMobileTab('map');
+    } catch (err: any) {
+      if (err?.response?.status === 404) {
+        setMedicineError(`No nearby stores currently have "${medicineQuery}" in stock.`);
+      } else {
+        console.error('Error finding stores with medicine:', err);
+        setMedicineError('Something went wrong searching for stock. Please try again.');
+      }
+    } finally {
+      setMedicineLoading(false);
+    }
+  }, [medicineQuery, location]);
 
   const fetchPlacesByCity = useCallback(async () => {
     if (!city.trim()) return;
@@ -284,7 +348,30 @@ function MapPage() {
           {/* Search Card */}
           <div className="bg-white/5 border border-white/10 p-6 rounded-2xl shadow-xl backdrop-blur-lg">
             <h2 className="text-sm font-bold text-blue-400 uppercase tracking-wider mb-4">Location Finder</h2>
-            
+
+            {/* Search mode toggle */}
+            <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 mb-4">
+              <button
+                type="button"
+                onClick={() => setSearchMode('city')}
+                className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition cursor-pointer ${
+                  searchMode === 'city' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                By City
+              </button>
+              <button
+                type="button"
+                onClick={() => setSearchMode('medicine')}
+                className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition cursor-pointer ${
+                  searchMode === 'medicine' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                By Medicine 💊
+              </button>
+            </div>
+
+            {searchMode === 'city' ? (
             <div className="space-y-4">
               <div>
                 <label htmlFor="city-input" className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
@@ -319,13 +406,85 @@ function MapPage() {
                 </button>
               </div>
             </div>
+            ) : (
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="medicine-input" className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                  Medicine Name
+                </label>
+                <input
+                  type="text"
+                  id="medicine-input"
+                  value={medicineQuery}
+                  onChange={(e) => setMedicineQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') findStoresWithMedicine(); }}
+                  placeholder="e.g. Amoxicillin, Paracetamol"
+                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition duration-200 text-sm"
+                />
+              </div>
+
+              {medicineError && <p className="text-red-400 text-xs font-medium bg-red-950/20 border border-red-500/20 p-2.5 rounded-lg">{medicineError}</p>}
+
+              <button
+                onClick={findStoresWithMedicine}
+                disabled={medicineLoading}
+                className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold rounded-xl text-sm shadow-md transition transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50"
+              >
+                {medicineLoading ? "Searching stock..." : "Find In-Stock Nearby"}
+              </button>
+              <p className="text-[11px] text-gray-500">Searches within 20km of your current location for real, live stock counts.</p>
+            </div>
+            )}
           </div>
 
           {/* List Card */}
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl flex-grow overflow-hidden flex flex-col max-h-[400px] lg:max-h-[500px]">
             <h2 className="text-sm font-bold text-blue-400 uppercase tracking-wider mb-4">Results List</h2>
-            
-            {state.loading ? (
+
+            {searchMode === 'medicine' ? (
+              medicineLoading ? (
+                <div className="flex items-center justify-center flex-grow py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div>
+                </div>
+              ) : stockStores.length === 0 ? (
+                <div className="flex items-center justify-center flex-grow py-12 text-center text-gray-500 text-sm">
+                  Search a medicine to see nearby stock.
+                </div>
+              ) : (
+                <div className="overflow-y-auto space-y-3 pr-1 flex-grow">
+                  {stockStores.map((store, idx) => {
+                    const isActive = selectedStockStore?.store === store.store;
+                    return (
+                      <div
+                        key={store.store || idx}
+                        onClick={() => { setSelectedStockStore(store); setMobileTab('map'); }}
+                        className={`p-4 rounded-xl border transition duration-250 cursor-pointer text-left ${
+                          isActive ? 'bg-white/10 border-emerald-500/50 shadow-md' : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/10'
+                        }`}
+                      >
+                        <h3 className="font-bold text-sm text-white flex items-center justify-between">
+                          <span>{store.storeDetails?.name || 'Partner Pharmacy'}</span>
+                          <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">
+                            {store.quantity} in stock
+                          </span>
+                        </h3>
+                        {store.storeAddress?.street && (
+                          <p className="text-xs text-gray-400 mt-1 truncate">
+                            {store.storeAddress.street}, {store.storeAddress.city}
+                          </p>
+                        )}
+                        {typeof store.distance === 'number' && (
+                          <p className="text-[11px] text-emerald-400 mt-1 font-mono">
+                            {(store.distance / 1000).toFixed(1)} km away
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )
+            ) : (
+            state.loading ? (
               <div className="flex items-center justify-center flex-grow py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
               </div>
@@ -367,6 +526,7 @@ function MapPage() {
                   );
                 })}
               </div>
+            )
             )}
           </div>
 
@@ -374,6 +534,15 @@ function MapPage() {
 
         {/* Right column: Leaflet Map */}
         <div className={`lg:col-span-8 bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-2xl h-[calc(100vh-240px)] min-h-[350px] sm:h-[450px] lg:h-[650px] relative z-10 ${mobileTab === "map" ? "block" : "hidden lg:block"}`}>
+          {searchMode === 'medicine' && stockStores.length > 0 ? (
+            <MedicineMap
+              userLocation={location}
+              stores={stockStores}
+              selectedStore={selectedStockStore}
+              onSelectStore={setSelectedStockStore}
+              onRouteUpdate={setRouteInfo}
+            />
+          ) : (
           <MapContainer
             center={location}
             zoom={15}
@@ -418,6 +587,7 @@ function MapPage() {
               );
             })}
           </MapContainer>
+          )}
         </div>
 
       </div>
