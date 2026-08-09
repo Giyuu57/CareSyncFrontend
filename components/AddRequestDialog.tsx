@@ -168,11 +168,23 @@ const AddRequestDialog: React.FC<AddRequestDialogProps> = ({
     if (!newRequest.licenseNumber.trim()) errors.licenseNumber = "License number is required.";
     if (!newRequest.contact.trim()) {
       errors.contact = "Contact number is required.";
-    } else if (!/^[\d\s\-\+]{10,15}$/.test(newRequest.contact.replace(/\s/g, ''))) {
+    } else if (!/^\d{10,15}$/.test(newRequest.contact.replace(/[\s\-\+]/g, ''))) {
+      // Matches the backend's isValidPhone exactly: strip spaces, dashes,
+      // and '+' first, THEN check length — so "+91-98765-43210" (16 chars
+      // as typed) correctly passes since it's 12 digits underneath, instead
+      // of being rejected here for being "too long" against the raw string.
       errors.contact = "Contact must be 10-15 digits.";
     }
     if (!newRequest.address.street.trim()) errors.street = "Street address is required.";
     if (!newRequest.address.city.trim()) errors.city = "City is required.";
+    // These three are silently required by the backend too, but weren't
+    // validated here before — reverse geocoding doesn't always fill them
+    // in (e.g. postal code is often missing for imprecise map clicks), so
+    // a submission could reach the server with these blank and get
+    // rejected with no visible reason to the user.
+    if (!newRequest.address.state.trim()) errors.state = "State/region is required.";
+    if (!newRequest.address.postalCode.trim()) errors.postalCode = "Postal code is required.";
+    if (!newRequest.address.country.trim()) errors.country = "Country is required.";
     if (newRequest.address.latitude === 0 && newRequest.address.longitude === 0) {
       errors.coords = "Please select store coordinates on the map.";
     }
@@ -193,7 +205,11 @@ const AddRequestDialog: React.FC<AddRequestDialogProps> = ({
       onClose();
     } catch (err) {
       console.error("Error adding request:", err);
-      showToast("Failed to submit registration request. Please try again.", "error");
+      // addRequest now throws an Error carrying the backend's actual
+      // validation message (e.g. "Postal code is required.") when
+      // available — show that instead of a generic, unhelpful message.
+      const message = err instanceof Error ? err.message : "Failed to submit registration request. Please try again.";
+      showToast(message, "error");
     } finally {
       setSubmitting(false);
     }
@@ -435,50 +451,83 @@ const AddRequestDialog: React.FC<AddRequestDialogProps> = ({
 
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                  State / Region
+                  State / Region <span className="text-cyan-400">*</span>
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. Rajasthan"
                   value={newRequest.address.state}
-                  onChange={(e) => setNewRequest({
-                    ...newRequest,
-                    address: { ...newRequest.address, state: e.target.value },
-                  })}
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition text-xs"
+                  onChange={(e) => {
+                    setNewRequest({
+                      ...newRequest,
+                      address: { ...newRequest.address, state: e.target.value },
+                    });
+                    if (fieldErrors.state) setFieldErrors((prev) => ({ ...prev, state: "" }));
+                  }}
+                  className={`w-full px-4 py-2.5 bg-white/5 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition text-xs ${
+                    fieldErrors.state ? "border-rose-500/60 bg-rose-500/5" : "border-white/10"
+                  }`}
+                  required
                 />
+                {fieldErrors.state && (
+                  <p className="text-rose-400 text-[10px] mt-1 flex items-center gap-1">
+                    <FiAlertCircle size={9} /> {fieldErrors.state}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                  Postal Code
+                  Postal Code <span className="text-cyan-400">*</span>
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. 302001"
                   value={newRequest.address.postalCode}
-                  onChange={(e) => setNewRequest({
-                    ...newRequest,
-                    address: { ...newRequest.address, postalCode: e.target.value },
-                  })}
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition text-xs"
+                  onChange={(e) => {
+                    setNewRequest({
+                      ...newRequest,
+                      address: { ...newRequest.address, postalCode: e.target.value },
+                    });
+                    if (fieldErrors.postalCode) setFieldErrors((prev) => ({ ...prev, postalCode: "" }));
+                  }}
+                  className={`w-full px-4 py-2.5 bg-white/5 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition text-xs ${
+                    fieldErrors.postalCode ? "border-rose-500/60 bg-rose-500/5" : "border-white/10"
+                  }`}
+                  required
                 />
+                {fieldErrors.postalCode && (
+                  <p className="text-rose-400 text-[10px] mt-1 flex items-center gap-1">
+                    <FiAlertCircle size={9} /> {fieldErrors.postalCode}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                  Country
+                  Country <span className="text-cyan-400">*</span>
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. India"
                   value={newRequest.address.country}
-                  onChange={(e) => setNewRequest({
-                    ...newRequest,
-                    address: { ...newRequest.address, country: e.target.value },
-                  })}
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition text-xs"
+                  onChange={(e) => {
+                    setNewRequest({
+                      ...newRequest,
+                      address: { ...newRequest.address, country: e.target.value },
+                    });
+                    if (fieldErrors.country) setFieldErrors((prev) => ({ ...prev, country: "" }));
+                  }}
+                  className={`w-full px-4 py-2.5 bg-white/5 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition text-xs ${
+                    fieldErrors.country ? "border-rose-500/60 bg-rose-500/5" : "border-white/10"
+                  }`}
+                  required
                 />
+                {fieldErrors.country && (
+                  <p className="text-rose-400 text-[10px] mt-1 flex items-center gap-1">
+                    <FiAlertCircle size={9} /> {fieldErrors.country}
+                  </p>
+                )}
               </div>
             </div>
           </div>

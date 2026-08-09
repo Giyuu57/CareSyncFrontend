@@ -29,11 +29,18 @@ export const addRequest = async (token: string, newRequest: any) => {
       country: newRequest.address.country,
     }
   }
-  console.log("New Request:", data);
-  const response = await axios.post(API_URL, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data;
+  try {
+    const response = await axios.post(API_URL, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (err: any) {
+    // The backend sends a specific reason (e.g. "State/region is required.")
+    // in response.data.message — surface that instead of a generic failure,
+    // otherwise the caller has no way to know what actually went wrong.
+    const backendMessage = err?.response?.data?.message;
+    throw new Error(backendMessage || "Failed to submit registration request. Please try again.");
+  }
 };
 
 export const updateRequestStatus = async (
